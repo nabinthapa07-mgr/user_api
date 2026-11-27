@@ -1,50 +1,56 @@
+
 import { useState } from "react";
-import { useAuth } from "../context/AuthContext.jsx";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext.jsx";
+import { Card } from "../components/ui/Card.jsx";
+import { Button } from "../components/ui/Button.jsx";
 
 export default function Login() {
-  const [email, setEmail] = useState("");
-  const { login, user } = useAuth();
+  const [name, setName] = useState("");
+  const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
+  function handleSubmit(e) {
     e.preventDefault();
 
-    if (!email.trim() || !email.includes("@")) {
-      alert("Please enter a valid email.");
+    if (!name.trim()) {
       return;
     }
 
-    await login(email);
+    login({ name: name.trim() });
     navigate("/profile");
-  };
-
-  if (user) {
-    return (
-      <section className="page">
-        <h1>You are already logged in.</h1>
-        <button onClick={() => navigate("/profile")}>Go to Profile</button>
-      </section>
-    );
   }
 
   return (
-    <section className="page">
-      <h1>Login</h1>
+    <section className="mx-auto max-w-md">
+      <Card>
+        <h1 className="mb-2 text-2xl font-bold text-fg">Login</h1>
+        <p className="mb-6 text-sm text-muted">
+          Enter your name to access your profile.
+        </p>
 
-      <form onSubmit={handleSubmit} className="login-form">
-        <input
-          type="email"
-          placeholder="Enter your email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <label htmlFor="name" className="block text-sm font-medium text-fg">
+              Your Name
+            </label>
 
-        <button type="submit">Login</button>
-      </form>
+            <input
+              id="name"
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Enter your name"
+              required
+              className="w-full rounded-card border border-line bg-bg p-3 text-fg outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            />
+          </div>
 
-      <p>This is a demo login without a backend.</p>
+          <Button type="submit" className="w-full justify-center">
+            Login
+          </Button>
+        </form>
+      </Card>
     </section>
   );
 }
